@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Governance & contribution policy
+    url: https://github.com/PrinciplesKJ/K-netics/blob/main/GOVERNANCE.md
+    about: How entries are reviewed, who has merge rights, and how flags are resolved.
+  - name: Discuss the project
+    url: https://github.com/PrinciplesKJ/K-netics/discussions
+    about: For general questions, ideas, or feedback (not tied to a specific entry).

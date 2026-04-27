@@ -44,7 +44,7 @@ Full schema: [`schema/entry_schema.json`](schema/entry_schema.json)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Submit entries via a GitHub Issue or pull request.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for data standards and [GOVERNANCE.md](GOVERNANCE.md) for the review process. Submit entries via a GitHub Issue or pull request.
 
 ## Exporting
 

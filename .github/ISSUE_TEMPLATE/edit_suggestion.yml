@@ -1,0 +1,34 @@
+name: Suggest an edit (no PR needed)
+description: Propose a change to an existing entry without opening a pull request.
+title: "[Edit] "
+labels: ["edit-request"]
+assignees: ["PrinciplesKJ"]
+body:
+  - type: input
+    id: entry_id
+    attributes:
+      label: Entry ID
+      placeholder: K001
+    validations:
+      required: true
+
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed change
+      description: Which field should change, and to what value?
+      placeholder: |
+        Field: k_eff
+        Current: 3.0e6
+        Proposed: 3.5e6
+        Source: Zhang & Winfree 2009, Table 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why is this change needed?
+    validations:
+      required: true

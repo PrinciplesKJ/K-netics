@@ -65,13 +65,33 @@ function renderRow(entry, index, { selected, expanded }) {
   `;
 }
 
+const REPO = 'https://github.com/PrinciplesKJ/K-netics';
+
 function renderDetail(entry) {
   const doi = entry.doi
     ? `<a href="https://doi.org/${escape(entry.doi)}" target="_blank" rel="noopener">${escape(entry.doi)} ↗</a>`
     : '—';
 
+  const editUrl    = `${REPO}/edit/main/data/entries/${escape(entry.id)}.json`;
+  const flagUrl    = `${REPO}/issues/new?template=flag.yml&entry_id=${escape(entry.id)}&title=${encodeURIComponent('Flag ' + entry.id)}`;
+  const historyUrl = `${REPO}/commits/main/data/entries/${escape(entry.id)}.json`;
+
   return `
     <div class="entry-detail">
+      <div class="detail-actions">
+        <a class="btn btn-ghost" href="${editUrl}" target="_blank" rel="noopener" title="Open this entry in the GitHub web editor">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Suggest edit
+        </a>
+        <a class="btn btn-ghost" href="${flagUrl}" target="_blank" rel="noopener" title="Open a flag issue for this entry">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22V4M4 4h12l-2 4 2 4H4"/></svg>
+          Flag
+        </a>
+        <a class="btn btn-ghost" href="${historyUrl}" target="_blank" rel="noopener" title="View edit history of this entry">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          History
+        </a>
+      </div>
       <div class="detail-strands">
         ${renderStrand('sub', entry.substrate_seq)}
         ${renderStrand('inc', entry.incumbent_seq)}

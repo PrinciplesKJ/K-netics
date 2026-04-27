@@ -1,0 +1,55 @@
+name: Flag an entry
+description: Report a problem with an existing entry — wrong data, unclear method, duplicate, etc.
+title: "[Flag] "
+labels: ["flag"]
+assignees: ["PrinciplesKJ"]
+body:
+  - type: input
+    id: entry_id
+    attributes:
+      label: Entry ID
+      description: Which entry are you flagging? (e.g. K001)
+      placeholder: K001
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: What kind of problem is this?
+      options:
+        - data-error          # numeric or sequence value is wrong
+        - method-question     # methodology unclear or possibly misclassified
+        - duplicate           # same reaction is already in the database
+        - missing-fields      # entry could be improved with more data
+        - retracted           # source paper has been retracted
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What is wrong, and how should it be corrected?
+      placeholder: |
+        e.g. The k_eff value of 3.0e6 should be 3.5e6 according to Table 2 of the source paper.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (optional)
+      description: Link to figures, page numbers in the source paper, or screenshots that support the flag.
+      placeholder: |
+        Page 17307, Figure 3a; or DOI 10.xxxx/yyyy supplementary table S2.
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Curator note
+      options:
+        - label: I have checked that this flag does not duplicate an existing open issue.
+          required: true
