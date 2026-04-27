@@ -1,0 +1,95 @@
+/* =========================================================================
+   K-netics design tokens — single source of truth for visual identity.
+   Change values here to retheme the entire site without touching components.
+   ========================================================================= */
+
+:root {
+  /* ── color: light mode ── */
+  --color-bg:          #fafafa;
+  --color-surface:     #ffffff;
+  --color-surface-2:   #f4f4f5;
+  --color-text:        #0f172a;
+  --color-text-muted:  #64748b;
+  --color-border:      #e4e4e7;
+  --color-accent:      #0891b2;
+  --color-accent-hover:#0e7490;
+  --color-accent-soft: #cffafe;
+  --color-success:     #10b981;
+  --color-warning:     #f59e0b;
+  --color-error:       #ef4444;
+
+  /* ── typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+
+  --leading-tight:  1.25;
+  --leading-normal: 1.5;
+  --leading-loose:  1.75;
+
+  --weight-normal:   400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* ── spacing scale ── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* ── radius ── */
+  --radius-sm: 4px;
+  --radius:    8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ── shadow ── */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow:    0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -2px rgb(0 0 0 / 0.04);
+
+  /* ── motion ── */
+  --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition:      200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── layout ── */
+  --max-width: 1200px;
+  --max-width-prose: 720px;
+}
+
+/* ── color: dark mode ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg:          #0a0a0a;
+    --color-surface:     #171717;
+    --color-surface-2:   #262626;
+    --color-text:        #fafafa;
+    --color-text-muted:  #a3a3a3;
+    --color-border:      #2a2a2a;
+    --color-accent:      #22d3ee;
+    --color-accent-hover:#67e8f9;
+    --color-accent-soft: #164e63;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow:    0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -2px rgb(0 0 0 / 0.4);
+  }
+}

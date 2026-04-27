@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse — K-netics</title>
+
+  <link rel="preconnect" href="https://rsms.me/" />
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/layout.css" />
+</head>
+<body>
+
+  <header class="container">
+    <nav class="site-nav">
+      <a class="site-nav-brand" href="./">K-netics</a>
+      <div class="site-nav-links">
+        <a href="browse.html">Browse</a>
+        <a href="https://github.com/PrinciplesKJ/K-netics" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container browse-layout">
+
+    <aside class="browse-sidebar">
+      <h2 style="font-size: var(--text-lg); margin-bottom: var(--space-4);">Filters</h2>
+      <div id="filters"></div>
+      <button id="reset-filters" class="btn btn-ghost" style="width: 100%;">Reset all filters</button>
+    </aside>
+
+    <section class="browse-main">
+      <div class="browse-toolbar">
+        <button id="download-filtered" class="btn btn-secondary">📥 Download filtered (CSV)</button>
+        <a class="btn btn-secondary" href="data/knetics.json" download>JSON</a>
+        <a class="btn btn-secondary" href="data/knetics.csv" download>CSV (full)</a>
+      </div>
+      <div class="browse-results-info" id="result-info">Loading…</div>
+      <div class="table-wrapper">
+        <div id="table"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="detail-panel-overlay" id="detail-overlay"></div>
+  <aside class="detail-panel" id="detail-panel"></aside>
+
+  <footer class="site-footer">
+    <div class="container">
+      Maintained by <a href="https://github.com/PrinciplesKJ" target="_blank" rel="noopener">@PrinciplesKJ</a>.
+    </div>
+  </footer>
+
+  <script type="module" src="js/browse.js"></script>
+</body>
+</html>

@@ -14,7 +14,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
 ENTRIES_DIR = REPO_ROOT / "data" / "entries"
-EXPORTS_DIR = REPO_ROOT / "exports"
+EXPORTS_DIR = REPO_ROOT / "site" / "data"
 
 COLUMNS = [
     "id", "doi", "year", "first_author", "curated_by", "curation_date", "confidence",
@@ -54,7 +54,7 @@ def export_csv(entries: list[dict]):
         writer.writeheader()
         for entry in entries:
             writer.writerow(flatten(entry))
-    print(f"CSV  → {path}")
+    print(f"CSV  -> {path}")
 
 
 def export_sqlite(entries: list[dict]):
@@ -87,15 +87,25 @@ def export_sqlite(entries: list[dict]):
 
     con.commit()
     con.close()
-    print(f"SQLite → {path}")
+    print(f"SQLite -> {path}")
+
+
+def export_json(entries: list[dict]):
+    path = EXPORTS_DIR / "knetics.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(entries, f, indent=2, ensure_ascii=False)
+    print(f"JSON   -> {path}")
 
 
 def main():
-    EXPORTS_DIR.mkdir(exist_ok=True)
+    EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
     entries = load_entries()
     if not entries:
-        print("No entries found.")
+        # Still emit empty exports so the site doesn't break
+        export_json([])
+        print("No entries found — emitted empty knetics.json")
         sys.exit(0)
+    export_json(entries)
     export_csv(entries)
     export_sqlite(entries)
     print(f"\nExported {len(entries)} entries.")
