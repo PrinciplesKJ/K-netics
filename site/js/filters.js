@@ -1,48 +1,40 @@
 /**
- * Filters — pure functions, each takes (entries, value) → filtered entries.
- * Add new filters by adding a key to FILTERS; UI auto-derives from FILTER_DEFS.
+ * Filters — pure functions + UI definitions for the chip/popover system.
  */
 
 export const FILTER_DEFS = {
-  search: {
-    label: 'Search',
-    type: 'text',
-    placeholder: 'DOI, author, sequence…',
-    default: '',
-  },
-  toeholdLengthMin: { label: 'Toehold length min', type: 'number', default: '' },
-  toeholdLengthMax: { label: 'Toehold length max', type: 'number', default: '' },
-  kEffMin:          { label: 'k_eff min (M⁻¹s⁻¹)',  type: 'number', default: '' },
-  kEffMax:          { label: 'k_eff max (M⁻¹s⁻¹)',  type: 'number', default: '' },
-  temperatureMin:   { label: 'Temperature min (°C)', type: 'number', default: '' },
-  temperatureMax:   { label: 'Temperature max (°C)', type: 'number', default: '' },
-  hasMismatches:    {
+  toeholdLengthMin: { label: 'Toehold ≥', type: 'number', chipKey: 'toehold≥' },
+  toeholdLengthMax: { label: 'Toehold ≤', type: 'number', chipKey: 'toehold≤' },
+  kEffMin:          { label: 'k_eff ≥',   type: 'number', chipKey: 'k≥' },
+  kEffMax:          { label: 'k_eff ≤',   type: 'number', chipKey: 'k≤' },
+  temperatureMin:   { label: 'T ≥ (°C)',  type: 'number', chipKey: 'T≥' },
+  temperatureMax:   { label: 'T ≤ (°C)',  type: 'number', chipKey: 'T≤' },
+  hasMismatches: {
     label: 'Mismatches',
     type: 'select',
-    options: [['', 'Any'], ['yes', 'With mismatches'], ['no', 'Without mismatches']],
-    default: '',
+    options: [['', 'any'], ['yes', 'with'], ['no', 'without']],
+    chipKey: 'mismatch',
   },
   hasHairpin: {
     label: 'Hairpin',
     type: 'select',
-    options: [['', 'Any'], ['yes', 'With hairpin'], ['no', 'Without hairpin']],
-    default: '',
+    options: [['', 'any'], ['yes', 'with'], ['no', 'without']],
+    chipKey: 'hairpin',
   },
   confidence: {
-    label: 'Min confidence',
+    label: 'Min conf.',
     type: 'select',
-    options: [['', 'Any'], ['1', '1 — full data'], ['2', '2 — partial'], ['3', '3 — figure-read']],
-    default: '',
+    options: [['', 'any'], ['1', '1'], ['2', '≤ 2'], ['3', '≤ 3']],
+    chipKey: 'conf',
   },
 };
 
-const FILTERS = {
+const PREDICATES = {
   search: (e, q) => {
     if (!q) return true;
     const needle = q.toLowerCase();
-    return [e.doi, e.first_author, e.substrate_seq, e.incumbent_seq, e.invader_seq, e.id]
-      .filter(Boolean)
-      .some(v => v.toLowerCase().includes(needle));
+    return [e.id, e.doi, e.first_author, e.substrate_seq, e.incumbent_seq, e.invader_seq, e.measurement_method, e.buffer]
+      .filter(Boolean).some(v => String(v).toLowerCase().includes(needle));
   },
   toeholdLengthMin: (e, v) => v === '' || e.toehold_length >= +v,
   toeholdLengthMax: (e, v) => v === '' || e.toehold_length <= +v,
@@ -50,28 +42,33 @@ const FILTERS = {
   kEffMax:          (e, v) => v === '' || e.k_eff <= +v,
   temperatureMin:   (e, v) => v === '' || e.temperature >= +v,
   temperatureMax:   (e, v) => v === '' || e.temperature <= +v,
-  hasMismatches: (e, v) => {
-    if (!v) return true;
-    return v === 'yes' ? e.mismatch_count > 0 : e.mismatch_count === 0;
-  },
-  hasHairpin: (e, v) => {
-    if (!v) return true;
-    return v === 'yes' ? e.hairpin === true : e.hairpin === false;
-  },
-  confidence: (e, v) => v === '' || e.confidence <= +v,
+  hasMismatches: (e, v) => !v || (v === 'yes' ? e.mismatch_count > 0 : e.mismatch_count === 0),
+  hasHairpin:    (e, v) => !v || (v === 'yes' ? e.hairpin === true : e.hairpin === false),
+  confidence:    (e, v) => v === '' || e.confidence <= +v,
 };
 
 export function applyFilters(entries, state) {
-  return entries.filter(entry =>
+  return entries.filter(e =>
     Object.entries(state).every(([key, value]) => {
-      const fn = FILTERS[key];
-      return fn ? fn(entry, value) : true;
+      const fn = PREDICATES[key];
+      return fn ? fn(e, value) : true;
     })
   );
 }
 
 export function defaultFilterState() {
-  return Object.fromEntries(
-    Object.entries(FILTER_DEFS).map(([key, def]) => [key, def.default])
-  );
+  return {
+    search: '',
+    ...Object.fromEntries(Object.keys(FILTER_DEFS).map(k => [k, '']))
+  };
+}
+
+export function activeChips(state) {
+  return Object.entries(state)
+    .filter(([key, value]) => key !== 'search' && value !== '' && FILTER_DEFS[key])
+    .map(([key, value]) => ({
+      key,
+      chipKey: FILTER_DEFS[key].chipKey,
+      value,
+    }));
 }

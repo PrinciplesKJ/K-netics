@@ -1,95 +1,113 @@
 /* =========================================================================
-   K-netics design tokens — single source of truth for visual identity.
-   Change values here to retheme the entire site without touching components.
+   K-netics design tokens — dark-first, data-app aesthetic.
+   Single source of truth: edit here to retheme the entire site.
    ========================================================================= */
 
 :root {
-  /* ── color: light mode ── */
-  --color-bg:          #fafafa;
-  --color-surface:     #ffffff;
-  --color-surface-2:   #f4f4f5;
-  --color-text:        #0f172a;
-  --color-text-muted:  #64748b;
-  --color-border:      #e4e4e7;
-  --color-accent:      #0891b2;
-  --color-accent-hover:#0e7490;
-  --color-accent-soft: #cffafe;
-  --color-success:     #10b981;
-  --color-warning:     #f59e0b;
-  --color-error:       #ef4444;
+  /* ── color: dark mode default ── */
+  --color-bg:           #0a0a0b;
+  --color-surface:      #131316;
+  --color-surface-2:    #1c1c20;
+  --color-surface-3:    #26262c;
+  --color-text:         #e4e4e7;
+  --color-text-strong:  #fafafa;
+  --color-text-muted:   #71717a;
+  --color-text-faint:   #52525b;
+  --color-border:       #27272a;
+  --color-border-strong:#3f3f46;
+
+  --color-accent:       #22d3ee;
+  --color-accent-hover: #67e8f9;
+  --color-accent-soft:  rgba(34, 211, 238, 0.12);
+  --color-accent-line:  rgba(34, 211, 238, 0.35);
+
+  --color-success:      #34d399;
+  --color-warning:      #fbbf24;
+  --color-error:        #f87171;
+
+  /* domain colors for sequence rendering */
+  --color-domain-toehold: rgba(34, 211, 238, 0.18);
+  --color-domain-toehold-text: #67e8f9;
+  --color-domain-bm:      rgba(168, 162, 158, 0.08);
+  --color-domain-bm-text: #d4d4d8;
+  --color-domain-mismatch:rgba(248, 113, 113, 0.25);
+  --color-domain-mismatch-text: #fca5a5;
 
   /* ── typography ── */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
 
-  --text-xs:   0.75rem;
-  --text-sm:   0.875rem;
-  --text-base: 1rem;
-  --text-lg:   1.125rem;
-  --text-xl:   1.25rem;
-  --text-2xl:  1.5rem;
-  --text-3xl:  1.875rem;
-  --text-4xl:  2.25rem;
-  --text-5xl:  3rem;
+  --text-xs:   0.6875rem;   /* 11px */
+  --text-sm:   0.8125rem;   /* 13px */
+  --text-base: 0.875rem;    /* 14px */
+  --text-md:   1rem;        /* 16px */
+  --text-lg:   1.125rem;    /* 18px */
+  --text-xl:   1.375rem;    /* 22px */
 
-  --leading-tight:  1.25;
+  --leading-tight:  1.3;
   --leading-normal: 1.5;
-  --leading-loose:  1.75;
 
-  --weight-normal:   400;
+  --weight-regular:  400;
   --weight-medium:   500;
   --weight-semibold: 600;
   --weight-bold:     700;
 
-  /* ── spacing scale ── */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
+  /* ── spacing ── */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
   --space-10: 2.5rem;
   --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
 
-  /* ── radius ── */
-  --radius-sm: 4px;
-  --radius:    8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /* ── radii ── */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius:    7px;
+  --radius-lg: 10px;
 
   /* ── shadow ── */
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow:    0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -2px rgb(0 0 0 / 0.04);
+  --shadow-glow: 0 0 0 1px var(--color-accent-line), 0 0 20px -2px var(--color-accent-soft);
+  --shadow:      0 4px 12px rgba(0, 0, 0, 0.4);
 
   /* ── motion ── */
-  --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition:      200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition:      180ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── layout ── */
-  --max-width: 1200px;
-  --max-width-prose: 720px;
+  --topbar-height: 44px;
+  --toolbar-height: 56px;
+  --row-height: 36px;
 }
 
-/* ── color: dark mode ── */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg:          #0a0a0a;
-    --color-surface:     #171717;
-    --color-surface-2:   #262626;
-    --color-text:        #fafafa;
-    --color-text-muted:  #a3a3a3;
-    --color-border:      #2a2a2a;
-    --color-accent:      #22d3ee;
-    --color-accent-hover:#67e8f9;
-    --color-accent-soft: #164e63;
+/* allow user override via prefers-color-scheme: light, but dark is default */
+@media (prefers-color-scheme: light) {
+  :root.theme-auto {
+    --color-bg:           #fafafa;
+    --color-surface:      #ffffff;
+    --color-surface-2:    #f4f4f5;
+    --color-surface-3:    #e4e4e7;
+    --color-text:         #18181b;
+    --color-text-strong:  #09090b;
+    --color-text-muted:   #71717a;
+    --color-text-faint:   #a1a1aa;
+    --color-border:       #e4e4e7;
+    --color-border-strong:#d4d4d8;
 
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow:    0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -2px rgb(0 0 0 / 0.4);
+    --color-accent:       #0891b2;
+    --color-accent-hover: #0e7490;
+    --color-accent-soft:  rgba(8, 145, 178, 0.1);
+    --color-accent-line:  rgba(8, 145, 178, 0.3);
+
+    --color-domain-toehold:      rgba(8, 145, 178, 0.12);
+    --color-domain-toehold-text: #0e7490;
+    --color-domain-bm:           rgba(0, 0, 0, 0.04);
+    --color-domain-bm-text:      #18181b;
+    --color-domain-mismatch:     rgba(220, 38, 38, 0.15);
+    --color-domain-mismatch-text:#b91c1c;
   }
 }

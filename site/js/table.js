@@ -1,82 +1,148 @@
 /**
- * Table renderer — sortable columns, click-to-detail.
- * Swap COLUMNS or replace this whole module to change the table presentation.
+ * Table renderer — CSS grid rows, inline expand-on-click.
+ * Pure rendering: no internal state. Caller manages selection/expansion.
  */
 
-export const COLUMNS = [
-  { key: 'id',                label: 'ID',         sortable: true,  format: v => v ?? '—' },
-  { key: 'first_author',      label: 'Author',     sortable: true,  format: v => v ?? '—' },
-  { key: 'year',              label: 'Year',       sortable: true,  format: v => v ?? '—', cls: 'num' },
-  { key: 'toehold_length',    label: 'Toehold',    sortable: true,  format: v => v ?? '—', cls: 'num' },
-  { key: 'k_eff',             label: 'k_eff (M⁻¹s⁻¹)', sortable: true, format: v => v == null ? '—' : v.toExponential(2), cls: 'num' },
-  { key: 'temperature',       label: 'T (°C)',     sortable: true,  format: v => v ?? '—', cls: 'num' },
-  { key: 'mismatch_count',    label: 'MM',         sortable: true,  format: v => v ?? 0, cls: 'num' },
-  { key: 'confidence',        label: 'Conf.',      sortable: true,  format: v => `<span class="chip chip-confidence-${v}">${v}</span>` },
-];
+import { renderInvader, renderStrand } from './sequence.js';
 
-export function renderTable(container, entries, { onRowClick, sortKey, sortDir }) {
-  if (!entries.length) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">∅</div>
-        <p>No entries match the current filters.</p>
-      </div>`;
-    return;
-  }
-
-  const sorted = sortKey
-    ? [...entries].sort((a, b) => compareValues(a[sortKey], b[sortKey], sortDir))
-    : entries;
-
-  const headerHTML = COLUMNS.map(col => `
-    <th data-sort-key="${col.key}"
-        class="${sortKey === col.key ? `sorted-${sortDir}` : ''} ${col.cls || ''}">
-      ${escape(col.label)}
-    </th>
-  `).join('');
-
-  const rowsHTML = sorted.map(entry => `
-    <tr data-id="${escape(entry.id)}">
-      ${COLUMNS.map(col => `
-        <td class="${col.cls || ''}">${col.format(entry[col.key])}</td>
-      `).join('')}
-    </tr>
-  `).join('');
-
-  container.innerHTML = `
-    <table class="data-table">
-      <thead><tr>${headerHTML}</tr></thead>
-      <tbody>${rowsHTML}</tbody>
-    </table>`;
-
-  container.querySelectorAll('th[data-sort-key]').forEach(th => {
-    th.addEventListener('click', () => {
-      const key = th.dataset.sortKey;
-      const dir = (sortKey === key && sortDir === 'asc') ? 'desc' : 'asc';
-      container.dispatchEvent(new CustomEvent('sort', { detail: { key, dir } }));
-    });
-  });
-
-  container.querySelectorAll('tbody tr').forEach(tr => {
-    tr.addEventListener('click', () => {
-      const id = tr.dataset.id;
-      const entry = entries.find(e => e.id === id);
-      if (entry && onRowClick) onRowClick(entry);
-    });
-  });
-}
-
-function compareValues(a, b, dir) {
-  if (a == null) return 1;
-  if (b == null) return -1;
-  const cmp = typeof a === 'number' && typeof b === 'number'
-    ? a - b
-    : String(a).localeCompare(String(b));
-  return dir === 'desc' ? -cmp : cmp;
-}
+/** Approximate log-scale max for k_eff bar (10^8 saturates the bar). */
+const K_EFF_LOG_MAX = 8;
+const K_EFF_LOG_MIN = 0;
 
 function escape(s) {
   return String(s).replace(/[&<>"']/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
+}
+
+function fmtKEff(v) {
+  if (v == null || !isFinite(v)) return '—';
+  return v.toExponential(2).replace('e+', 'e');
+}
+
+function kEffBarPct(v) {
+  if (v == null || v <= 0) return 0;
+  const logV = Math.log10(v);
+  const pct = ((logV - K_EFF_LOG_MIN) / (K_EFF_LOG_MAX - K_EFF_LOG_MIN)) * 100;
+  return Math.max(0, Math.min(100, pct));
+}
+
+export const COLUMNS = [
+  { key: 'id',             label: 'ID',          cls: 'col-id' },
+  { key: 'first_author',   label: 'Author',      cls: 'col-author' },
+  { key: 'year',           label: 'Year',        cls: 'col-year' },
+  { key: 'invader_seq',    label: 'Sequence',    cls: 'col-seq',  sortable: false },
+  { key: 'k_eff',          label: 'k_eff',       cls: 'col-keff' },
+  { key: 'temperature',    label: 'T',           cls: 'col-temp' },
+  { key: 'mismatch_count', label: 'MM',          cls: 'col-mm' },
+  { key: 'confidence',     label: 'Conf',        cls: 'col-conf' },
+];
+
+function renderRow(entry, index, { selected, expanded }) {
+  const cls = ['entry'];
+  if (selected) cls.push('selected');
+  if (expanded) cls.push('expanded');
+
+  return `
+    <div class="${cls.join(' ')}" data-id="${escape(entry.id)}" data-index="${index}">
+      <div class="entry-row">
+        <div class="col-id">${escape(entry.id)}</div>
+        <div class="col-author">${escape(entry.first_author || '—')}</div>
+        <div class="col-year">${escape(entry.year ?? '—')}</div>
+        <div class="col-seq">${renderInvader(entry, { showLabel: false })}</div>
+        <div class="col-keff">
+          <span class="keff-value">${fmtKEff(entry.k_eff)}</span>
+          <span class="keff-bar"><span class="keff-fill" style="width: ${kEffBarPct(entry.k_eff)}%"></span></span>
+        </div>
+        <div class="col-temp">${entry.temperature ?? '—'}</div>
+        <div class="col-mm">${entry.mismatch_count ?? 0}</div>
+        <div class="col-conf">
+          <span class="conf-dot conf-${entry.confidence}"></span>${entry.confidence ?? '—'}
+        </div>
+      </div>
+      ${expanded ? renderDetail(entry) : ''}
+    </div>
+  `;
+}
+
+function renderDetail(entry) {
+  const doi = entry.doi
+    ? `<a href="https://doi.org/${escape(entry.doi)}" target="_blank" rel="noopener">${escape(entry.doi)} ↗</a>`
+    : '—';
+
+  return `
+    <div class="entry-detail">
+      <div class="detail-strands">
+        ${renderStrand('sub', entry.substrate_seq)}
+        ${renderStrand('inc', entry.incumbent_seq)}
+        ${renderInvader(entry, { showLabel: true })}
+      </div>
+
+      <div class="detail-grid" style="margin-top: var(--space-4);">
+        <div class="detail-section">
+          <div class="detail-section-title">Source</div>
+          <dl class="detail-row"><dt>DOI</dt><dd>${doi}</dd></dl>
+          <dl class="detail-row"><dt>First author</dt><dd>${escape(entry.first_author || '—')} (${entry.year ?? '—'})</dd></dl>
+          <dl class="detail-row"><dt>Curated by</dt><dd>${escape(entry.curated_by || '—')} · ${escape(entry.curation_date || '—')}</dd></dl>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Domains</div>
+          <dl class="detail-row"><dt>Toehold</dt><dd>${entry.toehold_length} nt · ${escape(entry.toehold_seq || '—')}</dd></dl>
+          <dl class="detail-row"><dt>BM</dt><dd>${entry.branch_migration_length} nt · ${escape(entry.branch_migration_seq || '—')}</dd></dl>
+          <dl class="detail-row"><dt>Mismatches</dt><dd>${entry.mismatch_count || 0}${entry.mismatches?.length ? ' · pos ' + entry.mismatches.map(m => m.position).join(',') : ''}</dd></dl>
+          <dl class="detail-row"><dt>Features</dt><dd>${[
+            entry.hairpin && 'hairpin',
+            entry.clamps && 'clamps',
+            entry.terminal_gc && 'GC-clamp',
+            entry.modified_bases,
+          ].filter(Boolean).join(' · ') || 'none'}</dd></dl>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Kinetics</div>
+          <dl class="detail-row"><dt>k_eff</dt><dd>${fmtKEff(entry.k_eff)} M⁻¹s⁻¹${entry.k_eff_error ? ' ± ' + fmtKEff(entry.k_eff_error) : ''}</dd></dl>
+          <dl class="detail-row"><dt>k_leak</dt><dd>${entry.k_leak == null ? '—' : fmtKEff(entry.k_leak)}</dd></dl>
+          <dl class="detail-row"><dt>Method</dt><dd>${escape(entry.measurement_method || '—')}</dd></dl>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Conditions</div>
+          <dl class="detail-row"><dt>T</dt><dd>${entry.temperature ?? '—'} °C</dd></dl>
+          <dl class="detail-row"><dt>Buffer</dt><dd>${escape(entry.buffer || '—')}</dd></dl>
+          <dl class="detail-row"><dt>[Na⁺]</dt><dd>${entry.na_concentration_mM ?? '—'} mM</dd></dl>
+          <dl class="detail-row"><dt>[Mg²⁺]</dt><dd>${entry.mg_concentration_mM ?? '—'} mM</dd></dl>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Thermodynamics</div>
+          <dl class="detail-row"><dt>ΔG toehold</dt><dd>${entry.dg_toehold_kcal_mol ?? '—'}</dd></dl>
+          <dl class="detail-row"><dt>ΔG inc:sub</dt><dd>${entry.dg_incumbent_duplex_kcal_mol ?? '—'}</dd></dl>
+          <dl class="detail-row"><dt>ΔG inv:sub</dt><dd>${entry.dg_invader_duplex_kcal_mol ?? '—'}</dd></dl>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+export function renderTable(container, entries, { selectedIndex, expandedId, sortKey, sortDir }) {
+  const headerHTML = COLUMNS.map(col => {
+    const isSorted = sortKey === col.key;
+    return `<div class="${col.cls} ${isSorted ? `sorted ${sortDir}` : ''}" data-sort="${col.key}">${escape(col.label)}</div>`;
+  }).join('');
+
+  const rowsHTML = entries.length
+    ? entries.map((e, i) => renderRow(e, i, {
+        selected: i === selectedIndex,
+        expanded: e.id === expandedId,
+      })).join('')
+    : `<div class="empty-state">
+        <div class="empty-state-icon">∅</div>
+        No entries match the current filters.
+      </div>`;
+
+  container.innerHTML = `
+    <div class="entries-header">${headerHTML}</div>
+    ${rowsHTML}
+  `;
 }

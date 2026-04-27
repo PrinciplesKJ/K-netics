@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>K-netics — DNA strand displacement kinetics database</title>
+  <title>K-netics · DSD kinetics database</title>
   <meta name="description" content="An open, curated database of experimentally measured DNA strand displacement reaction kinetics." />
 
   <link rel="preconnect" href="https://rsms.me/" />
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles/tokens.css" />
   <link rel="stylesheet" href="styles/base.css" />
@@ -16,100 +19,88 @@
 </head>
 <body>
 
-  <header class="container">
-    <nav class="site-nav">
-      <a class="site-nav-brand" href="./">K-netics</a>
-      <div class="site-nav-links">
-        <a href="browse.html">Browse</a>
-        <a href="https://github.com/PrinciplesKJ/K-netics" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </nav>
-  </header>
+  <div class="app">
 
-  <main>
-    <section class="container">
-      <div class="hero">
-        <h1 class="hero-title">K-netics</h1>
-        <p class="hero-tagline">An open, curated database of experimentally measured DNA strand displacement reaction kinetics.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="browse.html">Browse data →</a>
-          <a class="btn btn-secondary" href="https://github.com/PrinciplesKJ/K-netics" target="_blank" rel="noopener">View on GitHub</a>
-        </div>
+    <!-- ░░ topbar ░░ -->
+    <header class="topbar">
+      <span class="topbar-brand">
+        <span class="topbar-brand-mark"></span>
+        K-netics
+      </span>
+      <span style="color: var(--color-text-faint); font-size: var(--text-sm);">DSD kinetics</span>
+
+      <div class="topbar-stats">
+        <span><strong id="stat-entries">—</strong> entries</span>
+        <span><strong id="stat-papers">—</strong> papers</span>
+        <span>updated <strong id="stat-updated">—</strong></span>
       </div>
 
-      <div class="stats-bar">
-        <div class="stat">
-          <div class="stat-value" id="stat-entries">—</div>
-          <div class="stat-label">Entries</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" id="stat-papers">—</div>
-          <div class="stat-label">Source papers</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value" id="stat-updated">—</div>
-          <div class="stat-label">Last updated</div>
-        </div>
+      <span class="topbar-spacer"></span>
+
+      <a class="icon-btn" href="https://github.com/PrinciplesKJ/K-netics" target="_blank" rel="noopener" title="View on GitHub" aria-label="GitHub">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+      <button class="icon-btn" id="help-btn" title="Keyboard shortcuts (?)" aria-label="Help">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.5"/><path d="M6 6c.3-1 1-1.5 2-1.5s2 .6 2 1.7c0 .8-.5 1.2-1 1.5-.6.3-1 .6-1 1.3M8 11.5v.05"/></svg>
+      </button>
+    </header>
+
+    <!-- ░░ command bar ░░ -->
+    <div class="command-bar">
+      <div class="search">
+        <span class="search-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        </span>
+        <input class="search-input" id="search" type="search" placeholder="Search sequences, DOI, author, method…" autocomplete="off" />
+        <span class="search-shortcut"><kbd>/</kbd></span>
       </div>
 
-      <section class="section">
-        <h2 class="section-title">Get the data</h2>
-        <div class="cards-grid">
-          <a class="card" href="browse.html">
-            <div class="card-icon">🔍</div>
-            <div class="card-title">Browse &amp; filter</div>
-            <div class="card-desc">Search by sequence, filter by toehold length, k_eff, conditions. Click any row for full details.</div>
-          </a>
-          <a class="card" href="data/knetics.csv" download>
-            <div class="card-icon">📥</div>
-            <div class="card-title">Download CSV</div>
-            <div class="card-desc">The full dataset as a flat CSV. Drop into Pandas, R, or Excel.</div>
-          </a>
-          <a class="card" href="https://github.com/PrinciplesKJ/K-netics/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">
-            <div class="card-icon">✍️</div>
-            <div class="card-title">Contribute</div>
-            <div class="card-desc">Found a paper not yet in the database? Submit an entry via GitHub Issues — it takes 5 minutes.</div>
-          </a>
-        </div>
-      </section>
+      <div style="position: relative;">
+        <button class="btn" id="add-filter">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+          Filter
+        </button>
+        <div class="popover" id="filter-popover" hidden></div>
+      </div>
 
-      <section class="section">
-        <details class="schema-summary">
-          <summary>What's in each entry?</summary>
-          <div class="schema-summary-content">
-            <p style="margin-bottom: var(--space-3);">Every entry captures a single experimentally measured rate constant for a standard toehold-mediated strand displacement reaction:</p>
-            <ul style="padding-left: var(--space-6); line-height: var(--leading-loose);">
-              <li><strong>Provenance:</strong> DOI, year, first author, confidence score (1–3)</li>
-              <li><strong>Strands:</strong> full substrate, incumbent, and invader sequences (5'→3')</li>
-              <li><strong>Domains:</strong> toehold and branch migration sequences + lengths</li>
-              <li><strong>Features:</strong> mismatches, hairpins, clamps, modified bases, terminal G–C</li>
-              <li><strong>Kinetics:</strong> k_eff (M⁻¹s⁻¹), error, leak rate, measurement method</li>
-              <li><strong>Conditions:</strong> temperature, buffer, [Na⁺], [Mg²⁺]</li>
-              <li><strong>Thermodynamics:</strong> ΔG of toehold and duplexes (when available)</li>
-            </ul>
-            <p style="margin-top: var(--space-4);">
-              <a href="https://github.com/PrinciplesKJ/K-netics/blob/main/schema/entry_schema.json" target="_blank" rel="noopener">View the full JSON schema →</a>
-            </p>
-          </div>
-        </details>
-      </section>
+      <div class="chips" id="chips"></div>
 
-      <section class="section">
-        <h2 class="section-title">Citation</h2>
-        <div class="container-prose" style="text-align: center;">
-          <p style="color: var(--color-text-muted);">Please cite the database (preprint forthcoming) and the source papers for each entry you use.</p>
-        </div>
-      </section>
-    </section>
-  </main>
+      <span style="flex: 1;"></span>
 
-  <footer class="site-footer">
-    <div class="container">
-      Maintained by <a href="https://github.com/PrinciplesKJ" target="_blank" rel="noopener">@PrinciplesKJ</a>.
-      Open data, MIT-licensed code.
+      <button class="btn" id="export-btn" title="Download visible entries as CSV">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m-5-5l5 5 5-5M5 21h14"/></svg>
+        Export
+      </button>
     </div>
-  </footer>
 
-  <script type="module" src="js/index.js"></script>
+    <!-- ░░ result info strip ░░ -->
+    <div class="result-info" id="result-info">Loading…</div>
+
+    <!-- ░░ data table ░░ -->
+    <main class="app-main">
+      <div class="entries" id="entries"></div>
+    </main>
+
+  </div>
+
+  <!-- ░░ shortcuts modal ░░ -->
+  <div class="help-modal" id="help-modal">
+    <div class="help-modal-content">
+      <h2>Keyboard shortcuts</h2>
+      <dl>
+        <dt><kbd>/</kbd></dt><dd>Focus search</dd>
+        <dt><kbd>j</kbd> / <kbd>↓</kbd></dt><dd>Next entry</dd>
+        <dt><kbd>k</kbd> / <kbd>↑</kbd></dt><dd>Previous entry</dd>
+        <dt><kbd>Enter</kbd></dt><dd>Expand / collapse selected entry</dd>
+        <dt><kbd>Esc</kbd></dt><dd>Close · clear search · collapse</dd>
+        <dt><kbd>?</kbd></dt><dd>Show this help</dd>
+      </dl>
+      <p style="margin-top: var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted);">
+        Press <kbd>Esc</kbd> or click outside to close.
+      </p>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>
