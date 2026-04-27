@@ -1,0 +1,45 @@
+{
+  "id": "K001",
+  "doi": "10.1021/ja906987s",
+  "year": 2009,
+  "first_author": "Zhang",
+  "curated_by": "PrinciplesKJ",
+  "curation_date": "2026-04-27",
+  "confidence": 2,
+
+  "reaction_type": "tmsd",
+  "nucleic_acid": "DNA",
+
+  "substrate_seq":  "TCGATGCTGCAAGCTTGTTG",
+  "incumbent_seq":  "GCTTGCAGCATCGA",
+  "invader_seq":    "CAACAAGCTTGCAGCATCGA",
+
+  "toehold_seq":             "CAACAA",
+  "toehold_length":          6,
+  "branch_migration_seq":    "GCTTGCAGCATCGA",
+  "branch_migration_length": 14,
+
+  "mismatches":     null,
+  "mismatch_count": 0,
+  "hairpin":        false,
+  "clamps":         false,
+  "clamp_description": null,
+  "modified_bases": null,
+  "terminal_gc":    false,
+  "other_features": "PLACEHOLDER — sequences are illustrative. Replace with real sequences from paper before merging.",
+
+  "k_eff":              3.0e6,
+  "k_eff_error":        null,
+  "k_leak":             null,
+  "k_leak_error":       null,
+  "measurement_method": "FRET",
+
+  "temperature":         25.0,
+  "buffer":              "1x TAE/Mg",
+  "na_concentration_mM": null,
+  "mg_concentration_mM": 12.5,
+
+  "dg_toehold_kcal_mol":          null,
+  "dg_incumbent_duplex_kcal_mol": null,
+  "dg_invader_duplex_kcal_mol":   null
+}

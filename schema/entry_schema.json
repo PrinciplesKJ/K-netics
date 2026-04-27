@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "K-netics Entry",
+  "description": "Schema for a single experimentally measured DNA strand displacement kinetics entry",
+  "type": "object",
+  "required": [
+    "id", "doi", "year", "first_author", "curated_by", "curation_date", "confidence",
+    "reaction_type", "nucleic_acid",
+    "substrate_seq", "incumbent_seq", "invader_seq",
+    "toehold_seq", "toehold_length", "branch_migration_seq", "branch_migration_length",
+    "mismatch_count", "hairpin", "clamps", "terminal_gc",
+    "k_eff", "measurement_method",
+    "temperature", "buffer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+
+    "id":             { "type": "string", "pattern": "^K[0-9]{3,}$", "description": "Unique entry ID, e.g. K001" },
+    "doi":            { "type": "string", "description": "DOI of the source paper" },
+    "year":           { "type": "integer", "minimum": 1990 },
+    "first_author":   { "type": "string" },
+    "curated_by":     { "type": "string", "description": "GitHub handle of curator" },
+    "curation_date":  { "type": "string", "format": "date", "description": "ISO 8601 date, e.g. 2026-04-27" },
+    "confidence":     { "type": "integer", "enum": [1, 2, 3],
+                        "description": "1=full data+clear method; 2=missing error or ambiguous method; 3=estimated/inferred" },
+
+    "reaction_type":  { "type": "string", "enum": ["tmsd"], "description": "v1: tmsd only" },
+    "nucleic_acid":   { "type": "string", "enum": ["DNA"],  "description": "v1: DNA only" },
+
+    "substrate_seq":          { "type": "string", "pattern": "^[ATGC]+$", "description": "Full substrate strand, 5'→3'" },
+    "incumbent_seq":          { "type": "string", "pattern": "^[ATGC]+$", "description": "Full incumbent strand, 5'→3'" },
+    "invader_seq":            { "type": "string", "pattern": "^[ATGC]+$", "description": "Full invader strand, 5'→3'" },
+
+    "toehold_seq":            { "type": "string", "pattern": "^[ATGC]+$" },
+    "toehold_length":         { "type": "integer", "minimum": 0 },
+    "branch_migration_seq":   { "type": "string", "pattern": "^[ATGC]+$" },
+    "branch_migration_length":{ "type": "integer", "minimum": 1 },
+
+    "mismatches": {
+      "description": "List of mismatches in the branch migration domain; null if none",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["position", "base_incumbent", "base_invader"],
+            "additionalProperties": false,
+            "properties": {
+              "position":       { "type": "integer", "description": "Position within branch migration domain (1-indexed from toehold junction)" },
+              "base_incumbent": { "type": "string", "pattern": "^[ATGC]$" },
+              "base_invader":   { "type": "string", "pattern": "^[ATGC]$" }
+            }
+          }
+        }
+      ]
+    },
+    "mismatch_count":     { "type": "integer", "minimum": 0 },
+    "hairpin":            { "type": "boolean", "description": "Any strand contains a hairpin motif" },
+    "clamps":             { "type": "boolean", "description": "Clamp base pairs present" },
+    "clamp_description":  { "type": ["string", "null"] },
+    "modified_bases":     { "type": ["string", "null"], "description": "e.g. 'LNA at position 3 of toehold'; null if none" },
+    "terminal_gc":        { "type": "boolean", "description": "Terminal base pair of the toehold-duplex junction is G-C" },
+    "other_features":     { "type": ["string", "null"] },
+
+    "k_eff":              { "type": "number", "exclusiveMinimum": 0, "description": "Second-order rate constant (M⁻¹s⁻¹)" },
+    "k_eff_error":        { "type": ["number", "null"], "description": "Uncertainty / std dev on k_eff (M⁻¹s⁻¹)" },
+    "k_leak":             { "type": ["number", "null"], "description": "Leak rate constant (s⁻¹ or M⁻¹s⁻¹ as reported); null if not reported" },
+    "k_leak_error":       { "type": ["number", "null"] },
+    "measurement_method": { "type": "string", "description": "e.g. FRET, bulk_fluorescence, gel" },
+
+    "temperature":        { "type": "number", "description": "Temperature in °C" },
+    "buffer":             { "type": "string", "description": "e.g. '1x TAE', 'PBS'" },
+    "na_concentration_mM":{ "type": ["number", "null"], "description": "[Na⁺] in mM" },
+    "mg_concentration_mM":{ "type": ["number", "null"], "description": "[Mg²⁺] in mM" },
+
+    "dg_toehold_kcal_mol":         { "type": ["number", "null"], "description": "ΔG of toehold binding (kcal/mol)" },
+    "dg_incumbent_duplex_kcal_mol":{ "type": ["number", "null"], "description": "ΔG of incumbent:substrate duplex (kcal/mol)" },
+    "dg_invader_duplex_kcal_mol":  { "type": ["number", "null"], "description": "ΔG of invader:substrate duplex (kcal/mol)" }
+  }
+}
